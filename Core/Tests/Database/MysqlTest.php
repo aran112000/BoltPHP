@@ -18,7 +18,9 @@ class MysqlTest extends \PHPUnit_Framework_TestCase {
 			->where('live = 1 AND deleted = 0')
 			->getSql();
 
-		echo $sql;
+		$this->assertEquals('SELECT `table`.`test`
+FROM `table`
+WHERE `table`.`live`=:' . md5('live') . ' AND `table`.`deleted`=:' . md5('deleted') . ';', $sql);
 	}
 
 	/**
