@@ -115,12 +115,15 @@ abstract class Database {
 
 	/**
 	 * @param array|string $conditions
+	 * @param array        $parameters
 	 * @return $this
 	 */
-	public function where($conditions) {
+	public function where($conditions, array $parameters = []) {
 		if (!is_array($conditions)) {
-			$conditions = explode(' and ', $conditions);
+			$conditions = explode(' AND ', str_replace(' and ', ' AND ', $conditions));
 		}
+
+		$this->parameters = array_merge($this->parameters, $parameters);
 
 		$this->doNormaliseTableAndFieldNames($conditions);
 
