@@ -34,10 +34,17 @@ class Mysql extends Database {
 	 */
 	public function getSql() {
 		$sql = [];
-		$sql[] = 'SELECT `' . implode('`,`', $this->select) . '`';
+		$selects = [];
+		foreach ($this->select as $select) {
+			if (!strstr($select, '.')) {
+				$selects[] = '`' . $this->from . '`.`' . $select . '`';
+			} else {
+				$selects[] = '`' . str_replace('.', '`.`', $select) . '`';
+			}
+		}
+		$sql[] = 'SELECT ' . implode(',', $selects);
 		$sql[] = 'FROM `' . $this->from . '`';
 		if (!empty($this->where)) {
-			$sql[] = 'WHERE';
 			$wheres = [];
 			foreach ($this->where as $field => $details) {
 				if (!strstr($field, '.')) {
@@ -51,7 +58,7 @@ class Mysql extends Database {
 					$wheres[] = $field . $details['operator'] . $details['value'];
 				}
 			}
-			$sql[] = implode(' AND ', $wheres);
+			$sql[] = 'WHERE ' . implode(' AND ', $wheres);
 		}
 		if (!empty($this->join)) {
 			foreach ($this->join as $table => $details) {
@@ -62,6 +69,6 @@ class Mysql extends Database {
 			$sql[] = 'LIMIT ' . (int) $this->limit;
 		}
 
-		return implode("\n", $sql);
+		return implode("\n", $sql) . ';';
 	}
 }
