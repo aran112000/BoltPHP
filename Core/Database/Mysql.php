@@ -8,14 +8,60 @@ namespace Core\Database;
  */
 class Mysql extends Database {
 
+	private $connection = null;
+
 	/**
 	 * @param string $server
 	 * @param string $username
 	 * @param string $password
 	 * @param string $database
-	 * @return resource
 	 */
 	protected function doConnect($server, $username, $password, $database) {
-		// TODO: Implement doConnect() method.
+		if ($this->connection === null) {
+			$this->connection = mysqli_connect($server, $username, $password, $database);
+		}
+	}
+
+	/**
+	 * @return bool|\mysqli_result
+	 */
+	protected function exec() {
+		return mysqli_query($this->connection, $this->getSql());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSql() {
+		$sql = [];
+		$sql[] = 'SELECT `' . implode('`,`', $this->select) . '`';
+		$sql[] = 'FROM `' . $this->from . '`';
+		if (!empty($this->where)) {
+			$sql[] = 'WHERE';
+			$wheres = [];
+			foreach ($this->where as $field => $details) {
+				if (!strstr($field, '.')) {
+					$field = '`' . $this->from . '`.`' . $field . '`';
+				} else {
+					$field = '`' . str_replace('.', '`.`', $field) . '`';
+				}
+				if ($details['raw']) {
+					$wheres[] = $field . $details['value'];
+				} else {
+					$wheres[] = $field . $details['operator'] . $details['value'];
+				}
+			}
+			$sql[] = implode(' AND ', $wheres);
+		}
+		if (!empty($this->join)) {
+			foreach ($this->join as $table => $details) {
+				$sql[] = strtoupper($details['type']) . ' JOIN `' . $table . '` ON ' . $details['condition'];
+			}
+		}
+		if ($this->limit > 0) {
+			$sql[] = 'LIMIT ' . (int) $this->limit;
+		}
+
+		return implode("\n", $sql);
 	}
 }
