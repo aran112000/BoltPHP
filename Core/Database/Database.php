@@ -15,8 +15,8 @@ abstract class Database {
 	protected $join = [];
 	protected $where = [];
 	protected $group_by = [];
-	protected $order_by = [];
 	protected $having = [];
+	protected $order_by = [];
 	protected $limit = -1;
 
 	public $format = false; // Makes resulting SQL slightly more legible
@@ -35,6 +35,8 @@ abstract class Database {
 
 
 	/**
+	 * TODO - This is currently unused - RAW support exists but it's currently used
+	 *
 	 * When any of these values are found in a database value, the value will be used in it's RAW form.
 	 * If we were to parameterize the values of a function it would break the SQL take this for example:
 	 *
@@ -200,6 +202,64 @@ abstract class Database {
 				'raw' => false,
 			];
 		}
+
+		return $this;
+	}
+
+	/**
+	 * @param array|string $group_bys
+	 *
+	 * @return $this
+	 */
+	public function groupBy($group_bys) {
+		if (!is_array($group_bys)) {
+			$group_bys = explode(',', $group_bys);
+		}
+
+		foreach ($group_bys as &$group_by) {
+			$this->doNormaliseTableAndFieldNames($group_by);
+		}
+
+		$this->group_by = $group_bys;
+
+		return $this;
+	}
+
+	/**
+	 * @param string|array $havings
+	 *
+	 * @return $this
+	 *
+	 */
+	public function having($havings) {
+		if (!is_array($havings)) {
+			$havings = explode(',', $havings);
+		}
+
+		foreach ($havings as &$having) {
+			$this->doNormaliseTableAndFieldNames($having);
+		}
+
+		$this->having = $havings;
+
+		return $this;
+	}
+
+	/**
+	 * @param array|string $order_bys
+	 *
+	 * @return $this
+	 */
+	public function orderBy($order_bys) {
+		if (!is_array($order_bys)) {
+			$order_bys = explode(',', $order_bys);
+		}
+
+		foreach($order_bys as &$order_by) {
+			$this->doNormaliseTableAndFieldNames($order_by);
+		}
+
+		$this->order_by = $order_bys;
 
 		return $this;
 	}

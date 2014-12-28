@@ -72,6 +72,51 @@ class Mysql extends Database {
 			}
 		}
 
+		// Group by clauses
+		if (!empty($this->group_by)) {
+			$group_by = [];
+			foreach($this->group_by as $group) {
+				if (!strstr($group, '.')) {
+					// If no derived table name has been specified, then fallback to using the main (FROM) table name
+					$group_by[] = '`' . $this->from . '`.`' . $group . '`';
+				} else {
+					$group_by[] = '`' . str_replace('.', '`.`', $group) . '`';
+				}
+			}
+
+			$sql[] = 'GROUP BY ' . ($this->format ? "\n\t" : '') . implode(($this->format ? "\n\t" : '') . ',', $group_by);
+		}
+
+		// Having clauses
+		if (!empty($this->having)) {
+			$having = [];
+			foreach($this->having as $hav) {
+				if (!strstr($hav, '.')) {
+					// If no derived table name has been specified, then fallback to using the main (FROM) table name
+					$having[] = '`' . $this->from . '`.`' . $hav . '`';
+				} else {
+					$having[] = '`' . str_replace('.', '`.`', $hav) . '`';
+				}
+			}
+
+			$sql[] = 'HAVING ' . ($this->format ? "\n\t" : '') . implode(($this->format ? "\n\t" : '') . ',', $having);
+		}
+
+		// Order by clauses
+		if (!empty($this->order_by)) {
+			$order_bys = [];
+			foreach($this->order_by as $order_by) {
+				if (!strstr($order_by, '.')) {
+					// If no derived table name has been specified, then fallback to using the main (FROM) table name
+					$order_bys[] = '`' . $this->from . '`.`' . $order_by . '`';
+				} else {
+					$order_bys[] = '`' . str_replace('.', '`.`', $order_by) . '`';
+				}
+			}
+
+			$sql[] = 'ORDER BY ' . ($this->format ? "\n\t" : '') . implode(($this->format ? "\n\t" : '') . ',', $order_bys);
+		}
+
 		// Limit Clause
 		if ($this->limit > 0) {
 			$sql[] = 'LIMIT ' . (int) $this->limit;
