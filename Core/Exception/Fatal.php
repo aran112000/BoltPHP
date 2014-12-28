@@ -1,6 +1,6 @@
 <?php
 namespace Core\Exception;
 
-class Fatal extends Core {
+class Fatal extends Exception {
 
 }
