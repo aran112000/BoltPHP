@@ -8,6 +8,8 @@ namespace Core\Database;
  */
 abstract class Database {
 
+	CONST PARAMETER_SEPARATOR = ':';
+
 	protected $select = [];
 	protected $from = '';
 	protected $join = [];
@@ -17,18 +19,43 @@ abstract class Database {
 	protected $having = [];
 	protected $limit = -1;
 
+	public $format = false; // Makes resulting SQL slightly more legible
+
 	protected $parameters = [];
 
-	CONST PARAMETER_SEPARATOR = ':';
-
-	private $operators = [
+	public $operators = [
 		'>=',
 		'<=',
 		'<>',
 		'!=',
+		'>',
+		'<',
 		'=',
-		'NOT IN',
+	];
+
+
+	/**
+	 * When any of these values are found in a database value, the value will be used in it's RAW form.
+	 * If we were to parameterize the values of a function it would break the SQL take this for example:
+	 *
+	 * This:
+	 *   SELECT * FROM `table` WHERE `password` = MD5('YOUR VALUE') AND ...
+	 * Would be converted into this:
+	 *   SELECT * FROM `table` WHERE `password` = :parameter_key AND ...
+	 *
+	 * NOTE: Please ensure when using Database specific function calls, that you're escaping your inputs correctly
+	 *       due to them being processed using the RAW value supplied
+	 *
+	 * Which would produce a completely different result - In all likelihood a NULL result set
+	 *
+	 * @var array
+     */
+	public $database_value_matches_for_raw = [
+		'(',
+		')',
 		'IN',
+		'NOT',
+		'IS',
 	];
 
 	/**
@@ -127,37 +154,65 @@ abstract class Database {
 
 		$this->doNormaliseTableAndFieldNames($conditions);
 
-		foreach ($conditions as $condition) {
-			foreach ($this->operators as $operator) {
-				if (strstr($condition, $operator)) {
-					$parts = explode($operator, $condition, 2);
+		foreach ($conditions as $key => $condition) {
+			$where_opts = [
+				'field' => '',
+				'value' => '',
+				'operator' => '=',
+			];
+			if (is_int($key)) {
+				foreach($this->operators as $operator) {
+					if (strstr($condition, $operator)) {
+						$parts = explode($operator, $condition, 2);
 
-					$field = trim($parts[0]);
-					$value = trim($parts[1]);
+						$where_opts['field'] = trim($parts[0]);
+						$where_opts['value'] = trim($parts[1]);
+						$where_opts['operator'] = $operator;
 
-					// Check if this value is a raw SQL value and if so, it must be auto parameterized to prevent possible SQL injection
-					if (substr($value, 0, 1) != self::PARAMETER_SEPARATOR) {
-						// Strip string wrapping quotes
-						$value = trim($value, '\'');
-						$parameter_key = md5($this->getEncodedParameterKey($field));
-						// Prevent any auto generated keys overlapping
-						while (isset($this->parameters[$parameter_key])) {
-							$parameter_key++;
-							$parameter_key = md5($parameter_key);
-						}
-						$this->parameters[$parameter_key] = $value;
-
-						$value = self::PARAMETER_SEPARATOR . $parameter_key;
+						break;
 					}
-
-					$this->where[$field] = [
-						'value' => $value,
-						'operator' => $operator,
-						'raw' => false,
-					];
-					break;
 				}
+			} else {
+				$where_opts['field'] = trim($key);
+				$where_opts['value'] = trim($condition);
 			}
+
+			$this->doStrictTypeValue($where_opts['value']);
+
+			// Check if this value is a raw SQL value and if so, it must be auto parameterized to prevent possible SQL injection
+			if (substr($where_opts['value'], 0, 1) !== self::PARAMETER_SEPARATOR) {
+				// Strip string wrapping quotes
+				$value = trim($where_opts['value'], '\'');
+				$parameter_key = md5($where_opts['field']);
+				// Prevent any auto generated keys overlapping
+				while (isset($this->parameters[$parameter_key])) {
+					$parameter_key++;
+					$parameter_key = md5($parameter_key);
+				}
+				$this->parameters[$parameter_key] = $value;
+
+				$where_opts['value'] = self::PARAMETER_SEPARATOR . $parameter_key;
+			}
+
+			$this->where[$where_opts['field']] = [
+				'value' => $where_opts['value'],
+				'operator' => $where_opts['operator'],
+				'raw' => false,
+			];
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param $limit
+	 *
+	 * @return $this
+     */
+    public function limit($limit) {
+		$limit = (int) $limit;
+		if ($limit > 0) {
+			$this->limit = $limit;
 		}
 
 		return $this;
@@ -179,10 +234,31 @@ abstract class Database {
 	}
 
 	/**
-	 * @param $key
-	 * @return mixed
-	 */
-	private function getEncodedParameterKey($key) {
-		return preg_replace('/[^a-zA-Z0-9_]/', '', $key);
+	 * @return array
+     */
+	public function get_parameters() {
+		return $this->parameters;
+	}
+
+	/**
+	 * @param string|int|float $value
+     */
+	public function doStrictTypeValue(&$value) {
+		if (is_numeric($value)) {
+			if (is_float($value)) {
+				$value = (float) $value;
+
+				return;
+			} else {
+				$int = (int) $value;
+				if ($int == $value) {
+					$value = $int;
+
+					return;
+				}
+			}
+		}
+
+		$value = (string) $value;
 	}
 }

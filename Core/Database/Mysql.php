@@ -37,13 +37,17 @@ class Mysql extends Database {
 		$selects = [];
 		foreach ($this->select as $select) {
 			if (!strstr($select, '.')) {
+				// If no derived table name has been specified, then fallback to using the main (FROM) table name
 				$selects[] = '`' . $this->from . '`.`' . $select . '`';
 			} else {
 				$selects[] = '`' . str_replace('.', '`.`', $select) . '`';
 			}
 		}
-		$sql[] = 'SELECT ' . implode(',', $selects);
-		$sql[] = 'FROM `' . $this->from . '`';
+
+		$sql[] = 'SELECT ' . ($this->format ? "\n\t" : '') . (!empty($selects) ? implode(($this->format ? "\n\t" : '') . ',', $selects) : '`' . $this->from . '`.*');
+		$sql[] = 'FROM ' . ($this->format ? "\n\t" : '') . '`' . $this->from . '`';
+
+		// Where clauses
 		if (!empty($this->where)) {
 			$wheres = [];
 			foreach ($this->where as $field => $details) {
@@ -55,20 +59,28 @@ class Mysql extends Database {
 				if ($details['raw']) {
 					$wheres[] = $field . $details['value'];
 				} else {
-					$wheres[] = $field . $details['operator'] . $details['value'];
+					$wheres[] = $field . ($this->format ? ' ' : '') . $details['operator'] . ($this->format ? ' ' : '') . $details['value'];
 				}
 			}
-			$sql[] = 'WHERE ' . implode(' AND ', $wheres);
+			$sql[] = 'WHERE ' . ($this->format ? "\n\t" : '') . implode(' AND ' . ($this->format ? "\n\t" : '') . '', $wheres);
 		}
+
+		// Join clauses
 		if (!empty($this->join)) {
 			foreach ($this->join as $table => $details) {
 				$sql[] = strtoupper($details['type']) . ' JOIN `' . $table . '` ON ' . $details['condition'];
 			}
 		}
+
+		// Limit Clause
 		if ($this->limit > 0) {
 			$sql[] = 'LIMIT ' . (int) $this->limit;
 		}
 
-		return implode("\n", $sql) . ';';
+		if ($this->format) {
+			return implode("\n", $sql) . ';';
+		} else {
+			return implode(' ', $sql) . ';';
+		}
 	}
 }
