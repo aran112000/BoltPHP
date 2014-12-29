@@ -6,8 +6,8 @@
          bootstrap="Core\Tests\testAutoloader.php"
     >
     <testsuites>
-        <testsuite name="Core tests">
-            <directory>./Core/Tests/</directory>
+        <testsuite name="Master tests">
+            <directory>./Bolt/Tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

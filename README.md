@@ -8,7 +8,7 @@ Well that couldn't be simpler, the following code will create, execute and loop 
 
 ```
 <?php
-$query = new \Core\Database\Mysql();
+$query = new \Bolt\Database\Mysql();
 foreach ($query->select(['column_1', 'column_2'])->from('YourTableName')->where(['active' => 1'])->limit(50) as $results) {
     echo $results->column_1 . ', ' . $results->column_2 . '\n';
 }
