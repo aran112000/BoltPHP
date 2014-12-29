@@ -20,9 +20,9 @@ class __TwigTemplate_c54d2c2b546da509c3eba94b829fcf92e769531a69069d61cd987a1c8df
     <small>
         &copy; ";
         // line 3
-        echo twig_escape_filter($this->env, twig_date_format_filter($this->env, "now", "Y"), "html", null, true);
+        echo twig_date_format_filter($this->env, "now", "Y");
         echo " ";
-        echo twig_escape_filter($this->env, (isset($context["site_name"]) ? $context["site_name"] : null), "html", null, true);
+        echo (isset($context["site_name"]) ? $context["site_name"] : null);
         echo ". All Rights Reserved.
     </small>
 </footer>";

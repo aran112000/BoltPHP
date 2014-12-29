@@ -19,7 +19,7 @@ class __TwigTemplate_6d94e92d61fad9e1c2eb2617494901bd78cb7d86582fc4d26e177436fa3
         echo "<header>
     <img src=\"/Themes/Default/images/logo.png\" width=\"200\" alt=\"";
         // line 2
-        echo twig_escape_filter($this->env, (isset($context["site_name"]) ? $context["site_name"] : null), "html", null, true);
+        echo (isset($context["site_name"]) ? $context["site_name"] : null);
         echo "\" />
 </header>";
     }
