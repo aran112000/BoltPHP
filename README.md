@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-Allure-Cosmetics
-================
-
-Allure Cosmetics - eCommerce website
-=======
 BoltPHP
 ================
 
@@ -24,4 +18,3 @@ foreach ($query->select(['column_1', 'column_2'])->from('YourTableName')->where(
 ```
 SELECT `YourTableName`.`column_1`, `YourTableName`.`column_2` FROM `YourTableName` WHERE `YourTableName`.`active` = 1 LIMIT 50
 ```
->>>>>>> master
