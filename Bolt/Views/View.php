@@ -2,13 +2,14 @@
 
 namespace Bolt\Views;
 
-use Bolt\Statics\Setting;
+use Bolt\Modules\Module,
+    Bolt\Statics\Setting;
 
 /**
  * Class View
  * @package Core\Views
  */
-class View {
+class View extends Module {
 
     /**
      * @var null|\Twig_Environment
@@ -34,17 +35,32 @@ class View {
     private $template_variables = [];
 
     /**
+     *
+     */
+    public function __construct() {
+        $this->setDefaultTemplate();
+    }
+
+    /**
+     * Try to automate the setting of a template name based on the calling class name converted to lowercase
+     */
+    private function setDefaultTemplate() {
+        $called_class_parts = str_replace('_', '', explode('\\', strtolower(get_called_class())));
+        $this->setTemplate(end($called_class_parts));
+    }
+
+    /**
      * @param string $template_name
      */
     protected function setTemplate($template_name) {
-        $this->template = trim($template_name, '.tpl') . '.tpl';
+        $this->template = str_replace('.tpl', '', $template_name) . '.tpl';
     }
 
     /**
      * @param array $template_variables
      */
     protected function setTemplateVariables(array $template_variables) {
-        $this->template_variables = $template_variables;
+        $this->template_variables = array_merge($this->template_variables, $template_variables);
     }
 
     /**
@@ -53,7 +69,7 @@ class View {
      *
      * @return string
      */
-    public function get_html(array $variables = [], $template_name = null) {
+    public function getHtml(array $variables = [], $template_name = null) {
         if ($variables !== []) {
             $this->setTemplateVariables($variables);
         }
@@ -115,6 +131,7 @@ class View {
                 'cache' => ROOT . DS . 'Data' . DS . 'Cache' . DS . 'Twig',
                 'auto_reload' => true,
                 'debug' => false,
+                'autoescape' => false,
             ]);
         }
 

@@ -31,7 +31,7 @@
 <body class="pages_module pages">
     {% include "header.tpl" %}
     <main>
-        <p>Welcome to our website...</p>
+        {{ PAGE_BODY }}
     </main>
     {% include "footer.tpl" %}
 </body>

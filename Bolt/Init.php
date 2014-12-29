@@ -73,7 +73,7 @@ class Init {
 	protected function getPage() {
 		$this->initPage();
 
-		return $this->page->get_html();
+		return $this->page->getHtml();
 	}
 
 	/**
