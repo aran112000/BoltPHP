@@ -1,1 +1,5 @@
 .idea
+/Data/Cache
+/Data/Log
+/Data/Temp
+/Data/Uploads
