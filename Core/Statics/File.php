@@ -3,18 +3,17 @@
 namespace Core\Statics;
 
 /**
- * Class file
- *
- * @package Core
+ * Class File
+ * @package Core\Statics
  */
-class file {
+class File {
 
     /**
      * @param $file
      *
      * @return string
      */
-    public static function get_extension($file) {
+    public static function getExtension($file) {
         $farr = explode('.', $file);
         $ext = strlen($farr[count($farr) - 1]);
 
