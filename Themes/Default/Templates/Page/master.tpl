@@ -31,9 +31,7 @@
 <body class="pages_module pages">
     {% include "header.tpl" %}
     <main>
-        {% block main %}
-            Welcome to our website...
-        {% endblock %}
+        <p>Welcome to our website...</p>
     </main>
     {% include "footer.tpl" %}
 </body>

@@ -8,9 +8,16 @@ namespace Bolt;
  */
 class Init {
 
+	/**
+	 * @var Views\Page|null
+     */
 	protected $page = null;
 
-	// Define the current code environment - This is used to setup our error reporting levels
+	/**
+	 * Define the current code environment - This is used to setup our error reporting levels
+	 *
+	 * @var bool
+     */
 	protected $production = false;
 
 	/**
@@ -20,12 +27,16 @@ class Init {
 		$this->setErrorReportingLevel();
 		$this->initConstants();
 
+		// Background processes purely load the framework but don't generate any HTML output
 		if (!defined('BACKGROUND_PROCESS') || !BACKGROUND_PROCESS) {
-			// Background processes purely load the framework but don't generate any HTML output
 			$this->initPage();
+			echo $this->getPage();
 		}
 	}
 
+	/**
+	 *
+     */
 	protected function setErrorReportingLevel() {
 		if ($this->production) {
 			error_reporting(0);
@@ -47,12 +58,27 @@ class Init {
 		define('IP', (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '000.000.000.000'));
 	}
 
+	/**
+	 *
+     */
 	protected function initPage() {
 		if ($this->page === null) {
-			$this->page = new Components\Layout\Page();
+			$this->page = new Views\Page();
 		}
 	}
 
+	/**
+	 * @return string
+     */
+	protected function getPage() {
+		$this->initPage();
+
+		return $this->page->get_html();
+	}
+
+	/**
+	 *
+     */
 	protected function doSanitizeRequestVars() {
 		if (isset($_REQUEST) && !empty($_REQUEST)) {
 			foreach ($_REQUEST as $key => &$value) {
