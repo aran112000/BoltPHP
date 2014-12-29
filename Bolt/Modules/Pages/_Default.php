@@ -17,7 +17,7 @@ class _Default extends View {
         parent::__controller($url_parts, $path_count);
 
         // Example page title ONLY - TODO - Pull page data from the Database and create a fallback 404 view to be used if there's no Database match
-        $page_title = ucwords(end($url_parts));
+        $page_title = ucwords(urldecode(end($url_parts)));
         $this->setTemplateVariables(['page' => ['title' => $page_title]]);
     }
 
