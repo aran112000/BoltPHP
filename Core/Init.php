@@ -20,7 +20,11 @@ class Init {
 	public function __construct() {
 		$this->setErrorReportingLevel();
 		$this->initConstants();
-		$this->initPage();
+
+		if (!defined('BACKGROUND_PROCESS') || !BACKGROUND_PROCESS) {
+			// Background processes purely load the framework but don't generate any HTML output
+			$this->initPage();
+		}
 	}
 
 	protected function setErrorReportingLevel() {
