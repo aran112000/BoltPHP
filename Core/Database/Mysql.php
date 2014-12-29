@@ -1,5 +1,9 @@
 <?php
+
 namespace Core\Database;
+
+use Core\Exception\Fatal,
+	Core\Statics\Setting;
 
 /**
  * Class Mysql - MySQL database layer, this should be used for all MySQL queries
@@ -8,6 +12,9 @@ namespace Core\Database;
  */
 class Mysql extends Database {
 
+	/**
+	 * @var null|\mysqli
+     */
 	private $connection = null;
 
 	/**
@@ -15,18 +22,74 @@ class Mysql extends Database {
 	 * @param string $username
 	 * @param string $password
 	 * @param string $database
+	 *
+	 * @throws \Core\Exception\Fatal
 	 */
 	protected function doConnect($server, $username, $password, $database) {
 		if ($this->connection === null) {
-			$this->connection = mysqli_connect($server, $username, $password, $database);
+			$this->connection = new \mysqli($server, $username, $password, $database);
+			if (mysqli_connect_errno()) {
+				throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
+			}
 		}
 	}
 
 	/**
+	 * @param null|string $class_name The name of the objects you wish to populate with a valid result set
+	 *                                If left NULL (default value), the derived (FROM) database table will be used where
+	 *                                a valid object exists with the same name e.g.
+	 *
+	 *                                /Objects/{FROM_TABLE_NAME}
+	 *
 	 * @return bool|\mysqli_result
+	 * @throws \Core\Exception\Fatal
+	 * @throws \Core\Exception\Warning
 	 */
-	protected function exec() {
-		return mysqli_query($this->connection, $this->getSql());
+	public function exec($class_name = null) {
+		if ($this->connection === null) {
+			$this->doConnect(
+				Setting::get('database_server', null, false, false),
+				Setting::get('database_username'),
+				Setting::get('database_password'),
+				Setting::get('database_name')
+			);
+		}
+
+		if (empty($this->parameters)) {
+			if (!$result = $this->connection->query($this->getSql())) {
+				echo $this->connection->error;
+			}
+		} else {
+			// TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
+			$result = null;
+			throw new Fatal('Support for parameterized queries is coming soon');
+		}
+
+		return $this->getResultSet($result, $class_name);
+	}
+
+	/**
+	 * @param \mysqli_result $result
+	 * @param null|string    $class_name
+	 *
+	 * @return array|null
+	 * @internal param bool $res
+	 */
+    private function getResultSet($result, $class_name) {
+		$result_set = null;
+		if ($result) {
+			if ($class_name === null) {
+				$class_name = ucfirst($this->from);
+			}
+			$class_name = '\Core\Objects\\' . $class_name;
+
+			$result_set = [];
+			while ($object = $result->fetch_object($class_name)) {
+				$result_set[] = $object;
+			}
+		}
+
+		return $result_set;
 	}
 
 	/**
