@@ -123,19 +123,23 @@ class View extends Module {
      */
     private function getTwigEnvironment() {
         if (self::$twig === null) {
-            require(ROOT . DS . 'Bolt' . DS . 'Libs' . DS . 'Twig' . DS . 'Autoloader.php');
-            \Twig_Autoloader::register();
-            $this->setTwigTemplateDirectories();
-            $loader = new \Twig_Loader_Filesystem(self::$twig_template_directories);
-            self::$twig = new \Twig_Environment($loader, [
-                'cache' => ROOT . DS . 'Data' . DS . 'Cache' . DS . 'Twig',
-                'auto_reload' => true,
-                'debug' => false,
-                'autoescape' => false,
-            ]);
+            $this->setTwigEnvironment();
         }
 
         return self::$twig;
+    }
+
+    protected function setTwigEnvironment() {
+        require(ROOT . DS . 'Bolt' . DS . 'Libs' . DS . 'Twig' . DS . 'Autoloader.php');
+        \Twig_Autoloader::register();
+        $this->setTwigTemplateDirectories();
+        $loader = new \Twig_Loader_Filesystem(self::$twig_template_directories);
+        self::$twig = new \Twig_Environment($loader, [
+            'cache' => ROOT . DS . 'Data' . DS . 'Cache' . DS . 'Twig',
+            'auto_reload' => true,
+            'debug' => false,
+            'autoescape' => false,
+        ]);
     }
 
     /**
