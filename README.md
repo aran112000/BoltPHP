@@ -1,4 +1,4 @@
-Allure-Cosmetics
+BoltPHP
 ================
 
-Allure Cosmetics - eCommerce website
+A simple PHP framework for rapid application development
