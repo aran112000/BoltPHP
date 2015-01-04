@@ -1,6 +1,6 @@
 <?php
 define('BACKGROUND_PROCESS', true);
-$_SERVER['DOCUMENT_ROOT'] = 'E:\Allure-Cosmetics';
+$_SERVER['DOCUMENT_ROOT'] = 'E:\Bolt';
 
 spl_autoload_register(function($class_name) {
 	if (is_readable($class_name . '.php')) {
