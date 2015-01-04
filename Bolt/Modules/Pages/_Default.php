@@ -20,5 +20,4 @@ class _Default extends View {
         $page_title = ucwords(urldecode(end($url_parts)));
         $this->setTemplateVariables(['page' => ['title' => $page_title]]);
     }
-
 }
