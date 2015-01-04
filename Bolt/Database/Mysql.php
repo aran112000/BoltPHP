@@ -27,6 +27,7 @@ class Mysql extends Database {
 	 */
 	public function doConnect($server, $username, $password, $database) {
 		if ($this->connection === null) {
+            echo '<p>Trying to connect using the following: ' . $server . ', ' . $username . ', ' . $password . ', ' . $database . '</p>'."\n";
 			$this->connection = new \mysqli($server, $username, $password, $database);
 			if (mysqli_connect_errno()) {
 				throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
