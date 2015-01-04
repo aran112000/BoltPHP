@@ -16,8 +16,6 @@ if (empty($_SERVER['DOCUMENT_ROOT'])) {
     $_SERVER['DOCUMENT_ROOT'] = implode(DIRECTORY_SEPARATOR, array_reverse($path_parts));
 }
 
-echo '<p><pre>' . print_r($_SERVER, true) . '</pre></p>';
-
 spl_autoload_register(function($class_name) {
 	if (is_readable($class_name . '.php')) {
 		require($class_name . '.php');
