@@ -17,10 +17,11 @@ if (empty($_SERVER['DOCUMENT_ROOT'])) {
 }
 
 spl_autoload_register(function($class_name) {
-	if (is_readable($class_name . '.php')) {
-		require($class_name . '.php');
+    $class_path = $_SERVER['DOCUMENT_ROOT'] . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+	if (is_readable($class_path)) {
+		require($class_path);
 	} else {
-        echo '<p>File not found... ' . $class_name . '.php</p>'."\n";
+        echo '<p>File not found... ' . $class_path . '</p>'."\n";
     }
 });
 
