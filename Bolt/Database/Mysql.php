@@ -25,7 +25,7 @@ class Mysql extends Database {
 	 *
 	 * @throws \Bolt\Exception\Fatal
 	 */
-	protected function doConnect($server, $username, $password, $database) {
+	public function doConnect($server, $username, $password, $database) {
 		if ($this->connection === null) {
 			$this->connection = new \mysqli($server, $username, $password, $database);
 			if (mysqli_connect_errno()) {
