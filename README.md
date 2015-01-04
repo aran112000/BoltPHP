@@ -1,6 +1,8 @@
 BoltPHP
 ================
 
+[![Build Status](https://travis-ci.org/aran112000/BoltPHP.svg?branch=dev)](https://travis-ci.org/aran112000/BoltPHP)
+
 A simple PHP framework for rapid application development
 
 ## Want to run a MySQL query and iterate through it's results? ##
