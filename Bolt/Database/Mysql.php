@@ -15,7 +15,7 @@ class Mysql extends Database {
 	/**
 	 * @var null|\mysqli
      */
-	private $connection = null;
+	private static $connection = null;
 
 	/**
 	 * @param string $server
@@ -26,9 +26,8 @@ class Mysql extends Database {
 	 * @throws \Bolt\Exception\Fatal
 	 */
 	public function doConnect($server, $username, $password, $database) {
-		if ($this->connection === null) {
-            echo '<p>Trying to connect using the following: ' . $server . ', ' . $username . ', ' . $password . ', ' . $database . '</p>'."\n";
-			$this->connection = new \mysqli($server, $username, $password, $database);
+		if (static::$connection === null) {
+            static::$connection = new \mysqli($server, $username, $password, $database);
 			if (mysqli_connect_errno()) {
 				throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
 			}
@@ -47,7 +46,7 @@ class Mysql extends Database {
 	 * @throws \Bolt\Exception\Warning
 	 */
 	public function exec($class_name = null) {
-		if ($this->connection === null) {
+		if (static::$connection === null) {
 			$this->doConnect(
 				Setting::get('database_server', null, false, false),
 				Setting::get('database_username'),
@@ -57,8 +56,8 @@ class Mysql extends Database {
 		}
 
 		if (empty($this->parameters)) {
-			if (!$result = $this->connection->query($this->getSql())) {
-				echo $this->connection->error;
+			if (!$result = static::$connection->query($this->getSql())) {
+				echo static::$connection->error;
 			}
 		} else {
 			// TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
