@@ -1,5 +1,8 @@
 <?php
 define('BACKGROUND_PROCESS', true);
+if (!defined('TRAVIS_CI')) {
+    define('TRAVIS_CI', false);
+}
 if (empty($_SERVER['DOCUMENT_ROOT'])) {
     // For environments where the DOCUMENT_ROOT isn't set, we generate it from the current file path
     $path_parts = explode(DIRECTORY_SEPARATOR, __FILE__);
@@ -22,5 +25,10 @@ spl_autoload_register(function($class_name) {
 		require($class_path);
 	}
 });
+
+if (TRAVIS_CI) {
+    $mysql = new \Bolt\Database\Mysql();
+    $mysql->doConnect('127.0.0.1', 'root', null, 'CloudFit');
+}
 
 $init = new \Bolt\Init();
