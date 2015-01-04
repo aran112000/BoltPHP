@@ -15,11 +15,13 @@ matrix:
 script: phpunit --configuration phpunit.xml
 
 mysql:
-  database: travis_ci_test
-  username: travis_ci_test
+  database: CloudFit
+  username: CloudFit
   encoding: utf8
 
 before_install:
   - sudo apt-get update > /dev/null
 
-before_script: phpenv config-add Bolt/Tests/test.php.ini
+before_script:
+  - phpenv config-add Bolt/Tests/test.php.ini
+  - mysql -e 'create database CloudFit;'
