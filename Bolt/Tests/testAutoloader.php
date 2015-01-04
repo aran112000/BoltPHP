@@ -20,9 +20,7 @@ spl_autoload_register(function($class_name) {
     $class_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
 	if (is_readable($class_path)) {
 		require($class_path);
-	} else {
-        echo '<p>File not found... ' . $class_path . '</p>'."\n";
-    }
+	}
 });
 
 $init = new \Bolt\Init();
