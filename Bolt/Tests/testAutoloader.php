@@ -17,7 +17,7 @@ if (empty($_SERVER['DOCUMENT_ROOT'])) {
 }
 
 spl_autoload_register(function($class_name) {
-    $class_path = $_SERVER['DOCUMENT_ROOT'] . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+    $class_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
 	if (is_readable($class_path)) {
 		require($class_path);
 	} else {
