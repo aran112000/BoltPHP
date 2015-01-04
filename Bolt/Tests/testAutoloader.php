@@ -23,4 +23,13 @@ spl_autoload_register(function($class_name) {
 	}
 });
 
+if (defined('TRAVIS_CI')) {
+    echo '<p>TRAVIS_CI is defined</p>' . "\n";
+} else {
+    echo '<p>TRAVIS_CI isn\'t defined</p>' . "\n";
+}
+
+$mysql = new \Bolt\Database\Mysql();
+$mysql->doConnect('127.0.0.1', 'CloudFit', null, 'CloudFit');
+
 $init = new \Bolt\Init();
