@@ -56,8 +56,14 @@ class Setting {
      */
     protected static function setDatabaseSettings() {
         $mysql = new Mysql();
-        foreach ($mysql->select(['setting', 'value'])->from('Settings')/*->where(['live' => 1, 'deleted' => 0])*/->exec() as $setting) {
-            static::$settings_cache[$setting->setting] = $setting->value;
+        try {
+            $settings = $mysql->select(['setting', 'value'])->from('Settings')->exec();
+
+            foreach ($settings as $setting) {
+                static::$settings_cache[$setting->setting] = $setting->value;
+            }
+        } catch (Exception\Exception $e) {
+            // No database settings available
         }
     }
 

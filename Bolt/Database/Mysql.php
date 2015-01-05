@@ -3,7 +3,8 @@
 namespace Bolt\Database;
 
 use Bolt\Exception\Fatal,
-	Bolt\Statics\Setting;
+	Bolt\Statics\Setting,
+    Bolt\Exception\Warning;
 
 /**
  * Class Mysql - MySQL database layer, this should be used for all MySQL queries
@@ -57,7 +58,8 @@ class Mysql extends Database {
 
 		if (empty($this->parameters)) {
 			if (!$result = static::$connection->query($this->getSql())) {
-				echo static::$connection->error;
+                $result = null;
+                throw new Warning(static::$connection->error);
 			}
 		} else {
 			// TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
