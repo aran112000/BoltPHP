@@ -24,6 +24,6 @@ class Exception extends \Exception {
      * @param $message
      */
     protected function do_log_error($message) {
-		trigger_error('Platform error: ' . $message);
+		//trigger_error('Platform error: ' . $message);
 	}
 }
