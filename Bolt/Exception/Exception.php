@@ -19,6 +19,8 @@ class Exception extends \Exception {
 	}
 
     /**
+     * TODO - Need to implement a proper logger to work based on the environment being ran within
+     *
      * @param $message
      */
     protected function do_log_error($message) {
