@@ -3,7 +3,9 @@
 namespace Bolt\Statics;
 
 use Bolt\Database\Mysql,
-    Bolt\Exception;
+    Bolt\Exception,
+    Bolt\Exception\Fatal,
+    Bolt\Exception\Warning;
 
 /**
  * Class Setting
@@ -28,12 +30,12 @@ class Setting {
      * @param bool $check_database
      *
      * @return null
-     * @throws \Bolt\Exception\Fatal
-     * @throws \Bolt\Exception\Warning
+     * @throws Fatal
+     * @throws Warning
      */
     public static function get($setting_name, $default_value = null, $throw_warning_on_no_result = false, $check_database = true) {
         if (empty($setting_name)) {
-            throw new Exception\Fatal('Please specify a valid setting name');
+            throw new Fatal('Please specify a valid setting name');
         }
         if (static::$settings_cache === null) {
             static::setIniSettings();
@@ -45,7 +47,7 @@ class Setting {
         if (isset(static::$settings_cache[$setting_name])) {
             return static::$settings_cache[$setting_name];
         } else if ($throw_warning_on_no_result) {
-            throw new Exception\Warning('Setting \'' . $setting_name . '\' not found');
+            throw new Warning('Setting \'' . $setting_name . '\' not found');
         }
 
         return $default_value;
