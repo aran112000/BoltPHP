@@ -28,7 +28,7 @@ spl_autoload_register(function($class_name) {
 
 if (TRAVIS_CI) {
     $mysql = new \Bolt\Database\Mysql();
-    $mysql->doConnect('127.0.0.1', 'root', null, 'CloudFit');
+    $mysql->doConnect('127.0.0.1', 'root', null, 'BoltPHP');
 }
 
 $init = new \Bolt\Init();

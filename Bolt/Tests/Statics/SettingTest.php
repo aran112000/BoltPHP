@@ -18,7 +18,7 @@ class SettingTest extends \PHPUnit_Framework_TestCase {
         // Test a missing setting
         $this->assertEquals(null, Setting::get('non_existent_setting_name'));
         // Test a valid setting
-        $this->assertEquals('CloudFit', Setting::get('site_name'));
+        $this->assertEquals('BoltPHP', Setting::get('site_name'));
     }
 
 }
