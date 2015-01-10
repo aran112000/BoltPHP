@@ -147,7 +147,7 @@ class View extends Module {
      */
     private function setTwigTemplateDirectories() {
         if (self::$twig_template_directories === null) {
-            foreach(glob(ROOT . DS . 'Themes' . DS . '*' . DS . 'Templates' . DS . '*' . DS . '*.tpl') as $template_file_path) {
+            foreach (glob(ROOT . DS . 'Themes' . DS . '*' . DS . 'Templates' . DS . '*' . DS . '*.tpl') as $template_file_path) {
                 $dirs[] = dirname($template_file_path);
             }
 
