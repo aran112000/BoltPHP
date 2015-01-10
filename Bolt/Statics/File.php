@@ -17,6 +17,6 @@ class File {
         $farr = explode('.', $file);
         $ext = strlen($farr[count($farr) - 1]);
 
-        return $f = strtolower(substr($file, -$ext));
+        return strtolower(substr($file, -$ext));
     }
 }
