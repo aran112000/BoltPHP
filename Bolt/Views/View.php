@@ -45,6 +45,7 @@ class View extends Module {
      * @param int   $path_count
      */
     public function controller(array $url_parts, $path_count) {
+
     }
 
     /**
