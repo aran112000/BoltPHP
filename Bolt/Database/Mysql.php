@@ -2,9 +2,7 @@
 
 namespace Bolt\Database;
 
-use Bolt\Exception\Fatal,
-    Bolt\Statics\Setting,
-    Bolt\Exception\Warning;
+use Bolt\Exception\Fatal, Bolt\Statics\Setting, Bolt\Exception\Warning;
 
 /**
  * Class Mysql - MySQL database layer, this should be used for all MySQL queries
@@ -13,93 +11,88 @@ use Bolt\Exception\Fatal,
  */
 class Mysql extends Database {
 
-	/**
-	 * @var null|\mysqli
+    /**
+     * @var null|\mysqli
      */
-	private static $connection = null;
+    private static $connection = null;
 
-	/**
-	 * @param string $server
-	 * @param string $username
-	 * @param string $password
-	 * @param string $database
-	 *
-	 * @throws \Bolt\Exception\Fatal
-	 */
-	public function doConnect($server, $username, $password, $database) {
-		if (static::$connection === null) {
+    /**
+     * @param string $server
+     * @param string $username
+     * @param string $password
+     * @param string $database
+     *
+     * @throws \Bolt\Exception\Fatal
+     */
+    public function doConnect($server, $username, $password, $database) {
+        if (static::$connection === null) {
             static::$connection = new \mysqli($server, $username, $password, $database);
-			if (mysqli_connect_errno()) {
-				throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
-			}
-		}
-	}
+            if (mysqli_connect_errno()) {
+                throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
+            }
+        }
+    }
 
-	/**
-	 * @param null|string $class_name The name of the objects you wish to populate with a valid result set
-	 *                                If left NULL (default value), the derived (FROM) database table will be used where
-	 *                                a valid object exists with the same name e.g.
-	 *
-	 *                                /Objects/{FROM_TABLE_NAME}
-	 *
-	 * @return bool|\mysqli_result
-	 * @throws \Bolt\Exception\Fatal
-	 * @throws \Bolt\Exception\Warning
-	 */
-	public function exec($class_name = null) {
-		if (static::$connection === null) {
-			$this->doConnect(
-				Setting::get('database_server', null, false, false),
-				Setting::get('database_username'),
-				Setting::get('database_password'),
-				Setting::get('database_name')
-			);
-		}
+    /**
+     * @param null|string $class_name The name of the objects you wish to populate with a valid result set
+     *                                If left NULL (default value), the derived (FROM) database table will be used where
+     *                                a valid object exists with the same name e.g.
+     *
+     *                                /Objects/{FROM_TABLE_NAME}
+     *
+     * @return bool|\mysqli_result
+     * @throws \Bolt\Exception\Fatal
+     * @throws \Bolt\Exception\Warning
+     */
+    public function exec($class_name = null) {
+        if (static::$connection === null) {
+            $this->doConnect(Setting::get('database_server', null, false, false), Setting::get('database_username'), Setting::get('database_password'), Setting::get('database_name'));
+        }
 
-		if (empty($this->parameters)) {
-			if (!$result = static::$connection->query($this->getSql())) {
+        if (empty($this->parameters)) {
+            if (!$result = static::$connection->query($this->getSql())) {
                 $result = null;
                 throw new Warning(static::$connection->error);
-			}
-		} else {
-			// TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
-			$result = null;
-			throw new Fatal('Support for parameterized queries is coming soon');
-		}
+            }
+        } else {
+            // TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
+            $result = null;
+            throw new Fatal('Support for parameterized queries is coming soon');
+        }
 
-		return $this->getResultSet($result, $class_name);
-	}
+        return $this->getResultSet($result, $class_name);
+    }
 
-	/**
-	 * @param \mysqli_result $result
-	 * @param null|string    $class_name
-	 *
-	 * @return array|null
-	 * @internal param bool $res
-	 */
+    /**
+     * @param \mysqli_result $result
+     * @param null|string    $class_name
+     *
+     * @return array|null
+     * @internal param bool $res
+     */
     private function getResultSet($result, $class_name) {
-		$result_set = null;
-		if ($result) {
-			if ($class_name === null) {
-				$class_name = ucfirst($this->from);
-			}
-			$class_name = '\Bolt\Objects\\' . $class_name;
+        $result_set = null;
+        if ($result) {
+            if ($class_name === null) {
+                $class_name = ucfirst($this->from);
+            }
+            $class_name = '\Bolt\Objects\\' . $class_name;
 
-			$result_set = [];
-			while ($object = $result->fetch_object($class_name)) {
-				$result_set[] = $object;
-			}
-		}
+            $result_set = [];
+            while($object = $result->fetch_object($class_name)) {
+                $result_set[] = $object;
+            }
+        }
 
-		return $result_set;
-	}
+        return $result_set;
+    }
 
     /**
      * @return string
      */
     protected function getSqlSelectString() {
         $selects = [];
-        foreach($this->select as $select) {
+        foreach ($this->select as $select) {
             if (!strstr($select, '.')) {
                 // If no derived table name has been specified, then fallback to using the main (FROM) table name
                 $selects[] = '`' . $this->from . '`.`' . $select . '`';
@@ -124,7 +117,7 @@ class Mysql extends Database {
     protected function getSqlWhereString() {
         if (!empty($this->where)) {
             $wheres = [];
-            foreach($this->where as $field => $details) {
+            foreach ($this->where as $field => $details) {
                 if (!strstr($field, '.')) {
                     $field = '`' . $this->from . '`.`' . $field . '`';
                 } else {
@@ -136,6 +129,7 @@ class Mysql extends Database {
                     $wheres[] = $field . ($this->format ? ' ' : '') . $details['operator'] . ($this->format ? ' ' : '') . $details['value'];
                 }
             }
+
             return 'WHERE ' . ($this->format ? "\n\t" : '') . implode(' AND ' . ($this->format ? "\n\t" : '') . '', $wheres);
         }
 
@@ -148,7 +142,7 @@ class Mysql extends Database {
     protected function getSqlJoinString() {
         if (!empty($this->join)) {
             $joins = [];
-            foreach($this->join as $table => $details) {
+            foreach ($this->join as $table => $details) {
                 $joins[] = strtoupper($details['type']) . ' JOIN `' . $table . '` ON ' . $details['condition'];
             }
 
@@ -164,7 +158,7 @@ class Mysql extends Database {
     protected function getSqlGroupByString() {
         if (!empty($this->group_by)) {
             $group_by = [];
-            foreach($this->group_by as $group) {
+            foreach ($this->group_by as $group) {
                 if (!strstr($group, '.')) {
                     // If no derived table name has been specified, then fallback to using the main (FROM) table name
                     $group_by[] = '`' . $this->from . '`.`' . $group . '`';
@@ -185,7 +179,7 @@ class Mysql extends Database {
     protected function getSqlHavingString() {
         if (!empty($this->having)) {
             $having = [];
-            foreach($this->having as $hav) {
+            foreach ($this->having as $hav) {
                 if (!strstr($hav, '.')) {
                     // If no derived table name has been specified, then fallback to using the main (FROM) table name
                     $having[] = '`' . $this->from . '`.`' . $hav . '`';
@@ -207,7 +201,7 @@ class Mysql extends Database {
     protected function getSqlOrderByString() {
         if (!empty($this->order_by)) {
             $order_bys = [];
-            foreach($this->order_by as $order_by) {
+            foreach ($this->order_by as $order_by) {
                 if (!strstr($order_by, '.')) {
                     // If no derived table name has been specified, then fallback to using the main (FROM) table name
                     $order_bys[] = '`' . $this->from . '`.`' . $order_by . '`';
@@ -234,10 +228,10 @@ class Mysql extends Database {
         return '';
     }
 
-	/**
-	 * @return string
-	 */
-	public function getSql() {
+    /**
+     * @return string
+     */
+    public function getSql() {
         $sql_parts = [
             $this->getSqlSelectString(),
             $this->getSqlFromString(),
@@ -263,5 +257,5 @@ class Mysql extends Database {
         $sql .= ';';
 
         return $sql;
-	}
+    }
 }
