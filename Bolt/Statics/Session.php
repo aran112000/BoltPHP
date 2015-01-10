@@ -47,7 +47,7 @@ final class session {
      *
      * @return bool
      */
-    protected static function is_session_hijacked() {
+    protected static function isSessionHijacked() {
         if (!isset($_SESSION[self::SESSION_NAME]['session_info']['ip_address']) || !isset($_SESSION[self::SESSION_NAME]['session_info']['user_agent'])) {
             self::regenerate_id(); // This is a completely new session so regenerating won't cause any harm here, just ensure that it hasn't just been captured
             return false;
@@ -63,7 +63,7 @@ final class session {
     /**
      * @param bool $remove_old_session
      */
-    public static function regenerate_id($remove_old_session = true) {
+    public static function regenerateId($remove_old_session = true) {
         session_regenerate_id($remove_old_session);
         $_SESSION[self::SESSION_NAME]['session_details']['ip_address'] = $_SERVER['REMOTE_ADDR'];
         $_SESSION[self::SESSION_NAME]['session_details']['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
@@ -74,8 +74,7 @@ final class session {
      *
      * @return bool
      */
-    public static function is_set($var) {
-        echo '<p>CHECKING IF $_SESSION[self::SESSION_NAME][' . $var . '] is set...</p>' . "\n";
+    public static function isSet($var) {
         if (!self::$session_started) {
             return false;
         }
@@ -92,13 +91,9 @@ final class session {
      */
     public static function set($var, $val) {
         if (!self::$session_started) {
-            echo '<p>Session wasn\'t started... Now starting</p>' . "\n";
             self::start();
-        } else {
-            echo '<p>Session already started</p>' . "\n";
         }
-
-        echo '<p>Setting session... $_SESSION[self::SESSION_NAME][' . $var . ']</p>' . "\n";
+        
         $_SESSION[self::SESSION_NAME][$var] = $val;
     }
 }
