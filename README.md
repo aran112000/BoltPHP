@@ -3,6 +3,8 @@ BoltPHP
 
 [![Build Status](https://travis-ci.org/aran112000/BoltPHP.svg?branch=dev)](https://travis-ci.org/aran112000/BoltPHP)
 
+[![Codacy Badge](https://www.codacy.com/project/badge/ce03c9f6e91b4c3a86579ae39fccfacd)](https://www.codacy.com/public/cdtreeks/BoltPHP)
+
 A simple PHP framework for rapid application development
 
 ## Want to run a MySQL query and iterate through it's results? ##
