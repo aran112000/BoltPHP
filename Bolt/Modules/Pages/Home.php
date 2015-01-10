@@ -7,4 +7,4 @@ use Bolt\Views\View;
  * Class Home
  * @package Bolt\Modules\Pages
  */
-class Home extends View { }
+class Home extends View {}
