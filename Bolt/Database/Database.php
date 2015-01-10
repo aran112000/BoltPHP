@@ -255,7 +255,7 @@ abstract class Database {
 			$order_bys = explode(',', $order_bys);
 		}
 
-		foreach ($order_bys AS &$order_by) {
+		foreach ($order_bys as &$order_by) {
 			$this->doNormaliseTableAndFieldNames($order_by);
 		}
 
