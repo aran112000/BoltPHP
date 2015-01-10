@@ -2,8 +2,7 @@
 
 namespace Bolt\Views;
 
-use Bolt\Modules\Module,
-    Bolt\Statics\Setting;
+use Bolt\Modules\Module, Bolt\Statics\Setting;
 
 /**
  * Class View
@@ -39,6 +38,13 @@ class View extends Module {
      */
     public function __construct() {
         $this->setDefaultTemplate();
+    }
+
+    /**
+     * @param array $url_parts
+     * @param int   $path_count
+     */
+    public function controller(array $url_parts, $path_count) {
     }
 
     /**

@@ -30,4 +30,12 @@ class Page extends View {
 
         return $module->getHtml();
     }
+
+    /**
+     * @param array $url_parts
+     * @param int   $path_count
+     */
+    public function controller(array $url_parts, $path_count) {
+        // TODO: Implement controller() method.
+    }
 }
