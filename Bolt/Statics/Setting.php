@@ -28,7 +28,7 @@ class Setting {
     private static $db_settings_cache = null;
 
     /**
-     * @param      $setting_name
+     * @param string $setting_name
      * @param null $default_value
      * @param bool $throw_warning_on_no_result
      * @param bool $check_database
