@@ -101,7 +101,7 @@ class MysqlTest extends \PHPUnit_Framework_TestCase {
         foreach ($where_format_variants as $where) {
             $db = $this->getDatabaseInstance();
             $this->assertEquals($expected_sql, $db->select(['test'])->from('table')->where($where)->getSql());
-            $this->assertEquals($db->get_parameters(), [
+            $this->assertEquals($db->getParameters(), [
                 md5('live') => 1,
                 md5('deleted') => 0,
             ]);
@@ -115,7 +115,7 @@ class MysqlTest extends \PHPUnit_Framework_TestCase {
             'col3 <> col3',
             'col4 > col4',
         ])->getSql());
-        $this->assertEquals($db->get_parameters(), [
+        $this->assertEquals($db->getParameters(), [
             md5('col1') => 'col1',
             md5('col2') => 'col2',
             md5('col3') => 'col3',
@@ -126,7 +126,7 @@ class MysqlTest extends \PHPUnit_Framework_TestCase {
         $db = $this->getDatabaseInstance();
         $sql = $db->select(['test'])->from('table')->where('live = :live AND deleted = :deleted', ['live' => 1, 'deleted' => 0])->getSql();
         $this->assertEquals('SELECT `table`.`test` FROM `table` WHERE `table`.`live`=:live AND `table`.`deleted`=:deleted;', $sql);
-        $this->assertEquals($db->get_parameters(), [
+        $this->assertEquals($db->getParameters(), [
             'live' => 1,
             'deleted' => 0,
         ]);
