@@ -68,7 +68,7 @@ class Setting {
             $settings = $mysql->select(['setting', 'value'])->from('Settings')->exec();
 
             foreach ($settings as $setting) {
-                static::$settings_cache[$setting->setting] = $setting->value;
+                static::$db_settings_cache[$setting->setting] = $setting->value;
             }
         } catch (Exception\Exception $e) {
             // No database settings available
@@ -81,7 +81,7 @@ class Setting {
     protected static function setIniSettings() {
         foreach (static::getIniSettingsFiles() as $ini_setting_file) {
             foreach (parse_ini_file($ini_setting_file) as $setting => $value) {
-                static::$settings_cache[$setting] = $value;
+                static::$db_settings_cache[$setting] = $value;
             }
         }
     }
