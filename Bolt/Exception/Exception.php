@@ -15,7 +15,7 @@ class Exception extends \Exception {
     public function __construct($message = '', $code = 0, \Exception $previous = null) {
 		parent::__construct($message, $code, $previous);
 
-		$this->do_log_error($message);
+		$this->doLogError($message);
 	}
 
     /**
@@ -23,7 +23,7 @@ class Exception extends \Exception {
      *
      * @param $message
      */
-    protected function do_log_error($message) {
-		//trigger_error('Platform error: ' . $message);
+    protected function doLogError($message) {
+		trigger_error('Platform error: ' . $message);
 	}
 }
