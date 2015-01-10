@@ -21,7 +21,11 @@ class Setting {
     /**
      * @var null
      */
-    private static $settings_cache = null;
+    private static $ini_settings_cache = null;
+    /**
+     * @var null
+     */
+    private static $db_settings_cache = null;
 
     /**
      * @param      $setting_name
@@ -37,15 +41,17 @@ class Setting {
         if (empty($setting_name)) {
             throw new Fatal('Please specify a valid setting name');
         }
-        if (static::$settings_cache === null) {
+        if (static::$ini_settings_cache === null) {
             static::setIniSettings();
-            if ($check_database) {
-                static::setDatabaseSettings();
-            }
+        }
+        if (static::$db_settings_cache === null && $check_database) {
+            static::setDatabaseSettings();
         }
 
-        if (isset(static::$settings_cache[$setting_name])) {
-            return static::$settings_cache[$setting_name];
+        if (isset(static::$ini_settings_cache[$setting_name])) {
+            return static::$ini_settings_cache[$setting_name];
+        } else if (isset(static::$db_settings_cache[$setting_name])) {
+            return static::$db_settings_cache[$setting_name];
         } else if ($throw_warning_on_no_result) {
             throw new Warning('Setting \'' . $setting_name . '\' not found');
         }
