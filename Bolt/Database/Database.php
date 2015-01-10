@@ -8,7 +8,7 @@ namespace Bolt\Database;
  */
 abstract class Database {
 
-	CONST PARAMETER_SEPARATOR = ':';
+	const PARAMETER_SEPARATOR = ':';
 
 	protected $select = [];
 	protected $from = '';
@@ -163,7 +163,7 @@ abstract class Database {
 				'operator' => '=',
 			];
 			if (is_int($key)) {
-				foreach($this->operators as $operator) {
+				foreach ($this->operators as $operator) {
 					if (strstr($condition, $operator)) {
 						$parts = explode($operator, $condition, 2);
 
@@ -255,7 +255,7 @@ abstract class Database {
 			$order_bys = explode(',', $order_bys);
 		}
 
-		foreach($order_bys as &$order_by) {
+		foreach ($order_bys AS &$order_by) {
 			$this->doNormaliseTableAndFieldNames($order_by);
 		}
 
@@ -296,7 +296,7 @@ abstract class Database {
 	/**
 	 * @return array
      */
-	public function get_parameters() {
+	public function getParameters() {
 		return $this->parameters;
 	}
 
