@@ -79,7 +79,7 @@ class Mysql extends Database {
             $class_name = '\Bolt\Objects\\' . $class_name;
 
             $result_set = [];
-            while($object = $result->fetch_object($class_name)) {
+            while ($object = $result->fetch_object($class_name)) {
                 $result_set[] = $object;
             }
         }
