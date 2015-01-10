@@ -8,7 +8,7 @@ namespace Bolt\Components;
 class Router {
 
     protected $url_controller_mappings = [
-        '*' => 'Pages/_Default',
+        '*' => 'Pages/Page',
         '/' => 'Pages/Home',
     ];
 
@@ -17,15 +17,16 @@ class Router {
     protected $url_part_count = -1;
 
     /**
-     *
+     * @return \Bolt\Modules\Module
      */
     public function setRoute() {
         $controller = $this->getUrlMapping();
 
         $fully_qualified_class_name = '\Bolt\Modules\\' . $controller;
 
+        /** @var \Bolt\Modules\Module $module */
         $module = new $fully_qualified_class_name();
-        $module->__controller($this->url_parts, $this->url_part_count);
+        $module->controller($this->url_parts, $this->url_part_count);
 
         return $module;
     }
