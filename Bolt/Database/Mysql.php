@@ -117,6 +117,7 @@ class Mysql extends Database {
     protected function getSqlWhereString() {
         if (!empty($this->where)) {
             $wheres = [];
+            $operator_spacer = ($this->format ? ' ' : '');
             foreach ($this->where as $field => $details) {
                 if (!strstr($field, '.')) {
                     $field = '`' . $this->from . '`.`' . $field . '`';
@@ -126,7 +127,7 @@ class Mysql extends Database {
                 if ($details['raw']) {
                     $wheres[] = $field . $details['value'];
                 } else {
-                    $wheres[] = $field . ($this->format ? ' ' : '') . $details['operator'] . ($this->format ? ' ' : '') . $details['value'];
+                    $wheres[] = $field . $operator_spacer . $details['operator'] . $operator_spacer . $details['value'];
                 }
             }
 
