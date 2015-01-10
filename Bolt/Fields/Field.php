@@ -43,7 +43,7 @@ abstract class Field {
     /**
      * @return bool
      */
-    public function is_set() {
+    public function isSet() {
         return (bool) $this->value_set;
     }
 
@@ -71,7 +71,7 @@ abstract class Field {
      *
      * @return null|string
      */
-    public function sub_str($max_length = null) {
+    public function subStr($max_length = null) {
         if ($max_length === null) {
             $max_length = $this->max_length;
         }
