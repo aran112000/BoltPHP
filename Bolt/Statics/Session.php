@@ -26,7 +26,7 @@ final class session {
         self::$session_valid_domain = (!empty(self::$session_valid_domain) ? self::$session_valid_domain : $_SERVER['HTTP_HOST']);
 
         // Set the cookie settings and start the session
-        session_set_cookie_params(self::$session_lifetime, self::$session_valid_path, self::$session_valid_domain, $secure = true, $http_only = true // If TRUE then this session can't be accessed via JavaScript - Helps prevent XSS hijacks
+        session_set_cookie_params(self::$session_lifetime, self::$session_valid_path, self::$session_valid_domain, true, true // If TRUE then this session can't be accessed via JavaScript - Helps prevent XSS hijacks
         );
         if (!session_start()) {
             return false;
