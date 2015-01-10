@@ -74,7 +74,7 @@ class Setting {
      */
     protected static function setIniSettings() {
         foreach (static::getIniSettingsFiles() as $ini_setting_file) {
-            foreach ($settings = parse_ini_file($ini_setting_file) as $setting => $value) {
+            foreach (parse_ini_file($ini_setting_file) as $setting => $value) {
                 static::$settings_cache[$setting] = $value;
             }
         }
