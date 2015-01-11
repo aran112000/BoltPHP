@@ -3,6 +3,7 @@
         "vendor-dir": "Bolt/Libs/"
     },
     "require": {
-        "twig/twig": "~1.0"
+        "twig/twig": "1.16.*",
+        "phpmailer/phpmailer": "5.2.*"
     }
 }

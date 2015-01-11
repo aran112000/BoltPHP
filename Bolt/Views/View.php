@@ -137,7 +137,6 @@ class View extends Module {
     }
 
     protected function setTwigEnvironment() {
-        require(ROOT . DS . 'Bolt' . DS . 'Libs' . DS . 'Twig' . DS . 'Autoloader.php');
         \Twig_Autoloader::register();
         $this->setTwigTemplateDirectories();
         $loader = new \Twig_Loader_Filesystem(self::$twig_template_directories);
