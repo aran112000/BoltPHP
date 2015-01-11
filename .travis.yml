@@ -11,7 +11,7 @@ mysql:
   encoding: utf8
 
 before_install:
-  - sudo apt-get update > /dev/null
+  - composer install
 
 before_script:
   - phpenv config-add Bolt/Tests/test.php.ini
