@@ -1,0 +1,8 @@
+{
+    "config": {
+        "vendor-dir": "Bolt/Libs/"
+    },
+    "require": {
+        "twig/twig": "~1.0"
+    }
+}

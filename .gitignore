@@ -1,4 +1,6 @@
 .idea
+/composer.lock
+/Bolt/Libs
 /Data/Cache
 /Data/Log
 /Data/Temp
