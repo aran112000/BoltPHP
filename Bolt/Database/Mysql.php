@@ -2,7 +2,7 @@
 
 namespace Bolt\Database;
 
-use Bolt\Exception\Fatal, Bolt\Statics\Setting, Bolt\Exception\Warning;
+use Bolt\Exception\Fatal, Bolt\Statics\Setting, Bolt\Exception\Warning, PDO, PDOException;
 
 /**
  * Class Mysql - MySQL database layer, this should be used for all MySQL queries
@@ -12,7 +12,7 @@ use Bolt\Exception\Fatal, Bolt\Statics\Setting, Bolt\Exception\Warning;
 class Mysql extends Database {
 
     /**
-     * @var null|\mysqli
+     * @var null|PDO
      */
     private static $connection = null;
 
@@ -26,9 +26,11 @@ class Mysql extends Database {
      */
     public function doConnect($server, $username, $password, $database) {
         if (static::$connection === null) {
-            static::$connection = new \mysqli($server, $username, $password, $database);
-            if (mysqli_connect_errno()) {
-                throw new Fatal('Failed to connect to the MySQL server with error: ' . mysqli_connect_error());
+            try {
+                static::$connection = new PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
+                static::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch(PDOException $e) {
+                throw new Fatal('Failed to connect to the MySQL server with error: ' . $e->getMessage());
             }
         }
     }
@@ -40,7 +42,7 @@ class Mysql extends Database {
      *
      *                                /Objects/{FROM_TABLE_NAME}
      *
-     * @return bool|\mysqli_result
+     * @return bool
      * @throws \Bolt\Exception\Fatal
      * @throws \Bolt\Exception\Warning
      */
@@ -50,21 +52,37 @@ class Mysql extends Database {
         }
 
         if (empty($this->parameters)) {
-            if (!$result = static::$connection->query($this->getSql())) {
+            try {
+                $result = static::$connection->query($this->getSql());
+            } catch (PDOException $e) {
                 $result = null;
-                throw new Warning(static::$connection->error);
+                throw new Warning('MySQL query error: ' . $e->getMessage());
             }
         } else {
-            // TODO This needs to use mysqli_prepare and the getSql() output will need to be updated from named parameters
-            $result = null;
-            throw new Fatal('Support for parameterized queries is coming soon');
+            $statement = static::$connection->prepare($this->getSql());
+            foreach ($this->parameters as $parameter => $value) {
+                $data_type = PDO::PARAM_STR;
+                if (is_float($value)) {
+                    // There's no specific type within PDO for Floats currently
+                } else if (is_int($value)) {
+                    $data_type = PDO::PARAM_INT;
+                }
+                $statement->bindParam(Database::PARAMETER_SEPARATOR . $parameter, $value, $data_type);
+            }
+
+            try {
+                $statement->execute();
+            } catch(PDOException $e) {
+                $result = null;
+                throw new Warning('MySQL query error: ' . $e->getMessage());
+            }
         }
 
-        return $this->getResultSet($result, $class_name);
+        return $this->getResultSet($statement, $class_name);
     }
 
     /**
-     * @param \mysqli_result $result
+     * @param \PDOStatement  $result
      * @param null|string    $class_name
      *
      * @return array|null
@@ -79,7 +97,7 @@ class Mysql extends Database {
             $class_name = '\Bolt\Objects\\' . $class_name;
 
             $result_set = [];
-            while ($object = $result->fetch_object($class_name)) {
+            while ($object = $result->fetchObject($class_name)) {
                 $result_set[] = $object;
             }
         }
