@@ -29,7 +29,7 @@ class Mysql extends Database {
             try {
                 static::$connection = new PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
                 static::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch(PDOException $e) {
+            } catch (PDOException $e) {
                 throw new Fatal('Failed to connect to the MySQL server with error: ' . $e->getMessage());
             }
         }
@@ -72,7 +72,7 @@ class Mysql extends Database {
 
             try {
                 $statement->execute();
-            } catch(PDOException $e) {
+            } catch (PDOException $e) {
                 $result = null;
                 throw new Warning('MySQL query error: ' . $e->getMessage());
             }
@@ -82,8 +82,8 @@ class Mysql extends Database {
     }
 
     /**
-     * @param \PDOStatement  $result
-     * @param null|string    $class_name
+     * @param \PDOStatement $result
+     * @param null|string   $class_name
      *
      * @return array|null
      * @internal param bool $res
